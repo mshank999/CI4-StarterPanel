@@ -39,3 +39,5 @@ $routes->group('menu-management', static function ($routes) {
     $routes->post('create-submenu', 'Settings::createSubMenu');
 });
 $routes->get('menu','Menu::index');
+
+$routes->get('test03','Test03::index');

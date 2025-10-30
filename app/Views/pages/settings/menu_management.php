@@ -4,195 +4,168 @@
 <div class="container-fluid">
 	<div class="card">
 		<div class="card-header">
-			<h5 class="card-title mb-0">Create New Menu </h5>
+			<h5 class="card-title mb-0">選單管理 (階層式) </h5>
 		</div>
 		<div class="card-body">
 			<ul class="nav nav-tabs" id="myTab" role="tablist">
 				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Menu Category</button>
+					<button class="nav-link active" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab" aria-controls="menu" aria-selected="true">第一層選單</button>
 				</li>
 				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="menu-tab" data-bs-toggle="tab" data-bs-target="#menu" type="button" role="tab" aria-controls="menu" aria-selected="false">Menu</button>
-				</li>
-				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="submenu-tab" data-bs-toggle="tab" data-bs-target="#submenu" type="button" role="tab" aria-controls="submenu" aria-selected="false">Submenu</button>
+					<button class="nav-link" id="submenu-tab" data-bs-toggle="tab" data-bs-target="#submenu" type="button" role="tab" aria-controls="submenu" aria-selected="false">子選單</button>
 				</li>
 			</ul>
 			<div class="tab-content" id="myTabContent">
-				<div class="tab-pane fade show active" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-					<div class="mt-3">
-						<div class="row">
-							<div class="col-6">
-								<table class="table">
-									<thead>
-										<th>#</th>
-										<th>Menu Categories</th>
-									</thead>
-									<tbody>
-										<?php
-										$no = 1;
-										foreach ($MenuCategories as $menuCategories) :
-										?>
-											<tr>
-												<td><?= $no++; ?></td>
-												<td><?= $menuCategories['menu_category']; ?></td>
-											</tr>
-										<?php endforeach; ?>
-									</tbody>
-								</table>
-							</div>
-							<div class="col-6">
-								<h5 class="fw-bold text-primary">Create New Menu Category</h5>
-								<hr>
-								<form action="<?= base_url('menu-management/create-menu-category'); ?> " method="post">
-									<div class="mb-3">
-										<label for="inputMenuCategory" class="form-label">Add Menu Category</label>
-										<input type="text" class="form-control <?= ($validation->hasError('inputMenuCategory')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputMenuCategory'); ?>" id=" inputMenuCategory" name="inputMenuCategory" placeholder="Menu Category Name">
-										<div class="invalid-feedback">
-											<?= $validation->getError('inputMenuCategory'); ?>
-										</div>
-									</div>
-									<div class="text-end">
-										<button class="btn btn-primary ">Save Menu Category</button>
-									</div>
-								</form>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="tab-pane fade" id="menu" role="tabpanel" aria-labelledby="menu-tab">
+				<!-- 第一層選單 -->
+				<div class="tab-pane fade show active" id="menu" role="tabpanel" aria-labelledby="menu-tab">
 					<div class="mt-3">
 						<div class="row">
 							<div class="col-sm-6">
 								<table class="table">
 									<thead>
-										<th>#</th>
-										<th>Menu Category</th>
-										<th>Menu Icon</th>
-										<th>Menu Title</th>
-										<th>Menu Url</th>
+										<tr>
+											<th>#</th>
+											<th>選單標題</th>
+											<th>網址</th>
+											<th>圖示</th>
+										</tr>
 									</thead>
 									<tbody>
 										<?php
 										$no = 1;
-										foreach ($Menus as $menu) :
+										foreach ($MenuCategories as $menu) :
+											// 只顯示第一層選單 (parent_id IS NULL)
+											if (empty($menu['parent_id'])) :
 										?>
 											<tr>
 												<td><?= $no++; ?></td>
-												<td><?= $menu['menu_category']; ?></td>
-												<td> <i class="align-middle" data-feather="<?= $menu['icon']; ?>"></i> </td>
 												<td><?= $menu['title']; ?></td>
-												<td><?= $menu['url']; ?></td>
+												<td><?= $menu['url'] ?? '-'; ?></td>
+												<td><i class="align-middle" data-feather="<?= $menu['icon'] ?? ''; ?>"></i></td>
 											</tr>
-										<?php endforeach; ?>
+										<?php 
+											endif;
+										endforeach; 
+										?>
 									</tbody>
 								</table>
 							</div>
 							<div class="col-sm-6">
-								<h5 class="fw-bold text-primary">Create New Menu</h5>
+								<h5 class="fw-bold text-primary">建立第一層選單</h5>
 								<hr>
 								<form action="<?= base_url('menu-management/create-menu'); ?>" method="post">
 									<div class="mb-3">
-										<label for="inputMenuCategory2" class="form-label">Menu Category</label>
-										<select name="inputMenuCategory2" id="inputMenuCategory2" class="form-control <?= ($validation->hasError('inputMenuCategory2')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputMenuCategory2	'); ?>">
-											<option value=""> -- Choose Menu Category --</option>
-											<?php foreach ($MenuCategories as $menuCategory) : ?>
-												<option value="<?= $menuCategory['id']; ?>"><?= $menuCategory['menu_category']; ?></option>
-											<?php endforeach; ?>
-										</select>
-										<div class="invalid-feedback">
-											<?= $validation->getError('inputMenuCategory2'); ?>
-										</div>
-									</div>
-									<div class="mb-3">
-										<label for="inputMenuTitle" class="form-label">Menu Title</label>
-										<input type="text" class="form-control <?= ($validation->hasError('inputMenuTitle')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputMenuTitle'); ?>" id="inputMenuTitle" name="inputMenuTitle">
+										<label for="inputMenuTitle" class="form-label">選單標題</label>
+										<input type="text" class="form-control <?= ($validation->hasError('inputMenuTitle')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputMenuTitle'); ?>" id="inputMenuTitle" name="inputMenuTitle" required>
 										<div class="invalid-feedback">
 											<?= $validation->getError('inputMenuTitle'); ?>
 										</div>
 									</div>
 									<div class="mb-3">
-										<label for="inputMenuURL" class="form-label">Menu URL</label>
-										<input type="text" class="form-control <?= ($validation->hasError('inputMenuURL')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputMenuURL'); ?>" id="inputMenuURL" name="inputMenuURL">
+										<label for="inputMenuURL" class="form-label">選單網址</label>
+										<input type="text" class="form-control <?= ($validation->hasError('inputMenuURL')) ? 'is-invalid' : ''; ?>" value="<?= old('inputMenuURL'); ?>" id="inputMenuURL" name="inputMenuURL">
 										<div class="invalid-feedback">
 											<?= $validation->getError('inputMenuURL'); ?>
 										</div>
 									</div>
 									<div class="mb-3">
-										<label for="inputMenuIcon" class="form-label">Menu Icon <a href="https://feathericons.com/" target="_blank" rel="noopener noreferrer">(Lookup References)</a> </label>
-										<input type="text" class="form-control <?= ($validation->hasError('inputMenuIcon')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputMenuIcon'); ?>" id="inputMenuIcon" name="inputMenuIcon">
+										<label for="inputMenuIcon" class="form-label">圖示 <a href="https://feathericons.com/" target="_blank" rel="noopener noreferrer">(查詢圖示)</a></label>
+										<input type="text" class="form-control <?= ($validation->hasError('inputMenuIcon')) ? 'is-invalid' : ''; ?>" value="<?= old('inputMenuIcon'); ?>" id="inputMenuIcon" name="inputMenuIcon">
 										<div class="invalid-feedback">
 											<?= $validation->getError('inputMenuIcon'); ?>
 										</div>
 									</div>
 									<div class="text-end mt-3">
-										<button class="btn btn-primary ">Save Menu</button>
+										<button class="btn btn-primary">儲存選單</button>
 									</div>
 								</form>
 							</div>
 						</div>
 					</div>
 				</div>
+
+				<!-- 子選單 -->
 				<div class="tab-pane fade" id="submenu" role="tabpanel" aria-labelledby="submenu-tab">
 					<div class="mt-3">
 						<div class="row">
 							<div class="col-sm-6">
 								<table class="table">
 									<thead>
-										<th>#</th>
-										<th>Menu Category</th>
-										<th>Menu </th>
-										<th>Submenu Title</th>
-										<th>Submenu Url</th>
+										<tr>
+											<th>#</th>
+											<th>父選單</th>
+											<th>子選單標題</th>
+											<th>子選單網址</th>
+										</tr>
 									</thead>
 									<tbody>
 										<?php
+										// 取得所有有子選單的父選單
+										$parentMenus = [];
+										foreach ($MenuCategories as $menu) {
+											if (!empty($menu['parent_id'])) {
+												$parentMenus[] = $menu;
+											}
+										}
+
+										// 取得第一層選單 (用來顯示父選單名稱)
+										$rootMenus = [];
+										foreach ($MenuCategories as $menu) {
+											if (empty($menu['parent_id'])) {
+												$rootMenus[$menu['id']] = $menu['title'];
+											}
+										}
+
 										$no = 1;
-										foreach ($Submenus as $submenu) :
+										foreach ($parentMenus as $submenu) :
 										?>
 											<tr>
 												<td><?= $no++; ?></td>
-												<td><?= $submenu['menu_category']; ?></td>
-												<td><?= $submenu['menu_title']; ?> </td>
+												<td><?= $rootMenus[$submenu['parent_id']] ?? '-'; ?></td>
 												<td><?= $submenu['title']; ?></td>
-												<td><?= $submenu['url']; ?></td>
+												<td><?= $submenu['url'] ?? '-'; ?></td>
 											</tr>
 										<?php endforeach; ?>
 									</tbody>
 								</table>
 							</div>
 							<div class="col-sm-6">
-								<h5 class="fw-bold text-primary">Create New Submenu</h5>
+								<h5 class="fw-bold text-primary">建立子選單</h5>
 								<hr>
 								<form action="<?= base_url('menu-management/create-submenu'); ?>" method="post">
 									<div class="mb-3">
-										<label for="inputMenu" class="form-label">Menu Parent</label>
-										<select name="inputMenu" id="inputMenu" class="form-control <?= ($validation->hasError('inputMenu')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputMenu'); ?>">
-											<option value=""> -- Choose Menu Parent --</option>
-											<?php foreach ($Menus as $menu) : ?>
+										<label for="inputMenu" class="form-label">父選單</label>
+										<select name="inputMenu" id="inputMenu" class="form-control <?= ($validation->hasError('inputMenu')) ? 'is-invalid' : ''; ?>" required>
+											<option value=""> -- 選擇父選單 --</option>
+											<?php foreach ($MenuCategories as $menu) : 
+												// 只顯示第一層選單作為父選單選項
+												if (empty($menu['parent_id'])) :
+											?>
 												<option value="<?= $menu['id']; ?>"><?= $menu['title']; ?></option>
-											<?php endforeach; ?>
+											<?php 
+												endif;
+											endforeach; ?>
 										</select>
 										<div class="invalid-feedback">
 											<?= $validation->getError('inputMenu'); ?>
 										</div>
 									</div>
 									<div class="mb-3">
-										<label for="inputSubmenuTitle" class="form-label">Submenu Title</label>
-										<input type="text" class="form-control <?= ($validation->hasError('inputSubmenuTitle')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputSubmenuTitle'); ?>" id="inputSubmenuTitle" name="inputSubmenuTitle">
+										<label for="inputSubmenuTitle" class="form-label">子選單標題</label>
+										<input type="text" class="form-control <?= ($validation->hasError('inputSubmenuTitle')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputSubmenuTitle'); ?>" id="inputSubmenuTitle" name="inputSubmenuTitle" required>
 										<div class="invalid-feedback">
 											<?= $validation->getError('inputSubmenuTitle'); ?>
 										</div>
 									</div>
 									<div class="mb-3">
-										<label for="inputSubmenuURL" class="form-label">Submenu URL</label>
-										<input type="text" class="form-control <?= ($validation->hasError('inputSubmenuURL')) ? 'is-invalid' : ''; ?>" autofocus value="<?= old('inputSubmenuURL'); ?>"" id=" inputSubmenuURL" name="inputSubmenuURL">
+										<label for="inputSubmenuURL" class="form-label">子選單網址</label>
+										<input type="text" class="form-control <?= ($validation->hasError('inputSubmenuURL')) ? 'is-invalid' : ''; ?>" value="<?= old('inputSubmenuURL'); ?>" id="inputSubmenuURL" name="inputSubmenuURL">
 										<div class="invalid-feedback">
 											<?= $validation->getError('inputSubmenuURL'); ?>
 										</div>
 									</div>
 									<div class="text-end">
-										<button class="btn btn-primary">Save Submenu</button>
+										<button class="btn btn-primary">儲存子選單</button>
 									</div>
 								</form>
 							</div>

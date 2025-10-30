@@ -8,38 +8,35 @@ class Users extends Seeder
 {
 	public function run()
 	{
-		// Database seeding for user menu category
+		// 建立選單資料 (階層式結構)
 		$this->db->table('user_menu_category')->insertBatch([
+			// 第一層選單
 			[
-				'menu_category' 	=> 'Common Page'
-			],
-			[
-				'menu_category' 	=> 'Settings'
-			]
-		]);
-
-		// Database seeding for user menu
-		$this->db->table('user_menu')->insertBatch([
-			[
-				'menu_category' => 1,
+				'id'			=> 1,
+				'parent_id' 	=> null,
 				'title' 		=> 'Dashboard',
 				'url'    		=> 'dashboard',
 				'icon'    		=> 'home',
-				'parent'   		=> 0
+				'created_at'    => date('Y-m-d H:i:s'),
+				'updated_at'    => date('Y-m-d H:i:s')
 			],
 			[
-				'menu_category' => 2,
+				'id'			=> 2,
+				'parent_id' 	=> null,
 				'title' 		=> 'Users',
 				'url'    		=> 'users',
 				'icon'    		=> 'user',
-				'parent'   		=> 0
+				'created_at'    => date('Y-m-d H:i:s'),
+				'updated_at'    => date('Y-m-d H:i:s')
 			],
 			[
-				'menu_category' => 2,
+				'id'			=> 3,
+				'parent_id' 	=> null,
 				'title' 		=> 'Menu Management',
 				'url'    		=> 'menu-management',
 				'icon'    		=> 'command',
-				'parent'   		=> 0
+				'created_at'    => date('Y-m-d H:i:s'),
+				'updated_at'    => date('Y-m-d H:i:s')
 			],
 		]);
 
@@ -55,40 +52,24 @@ class Users extends Seeder
 			'username'    	=> 'developer@mail.io',
 			'password'    	=>  password_hash('123456', PASSWORD_DEFAULT),
 			'role'    		=>  1,
-			'created_at'    =>  date('Y-m-d h:i:s')
+			'created_at'    =>  date('Y-m-d H:i:s'),
+			'updated_at'    =>  date('Y-m-d H:i:s')
 		]);
 
-		// Database seeding for user access
+		// Database seeding for user access (簡化版)
+		// menu_item_id 指向 user_menu_category.id
 		$this->db->table('user_access')->insertBatch([
 			[
 				'role_id'    		=>  1,
-				'menu_category_id'  =>  1,
-				'menu_id'    		=>  0,
-				'submenu_id'		=> 	0
+				'menu_item_id'  	=>  1  // Dashboard
 			],
 			[
 				'role_id'    		=>  1,
-				'menu_category_id'  =>  0,
-				'menu_id'    		=>  1,
-				'submenu_id'		=> 	0
+				'menu_item_id'  	=>  2  // Users
 			],
 			[
 				'role_id'    		=>  1,
-				'menu_category_id'  =>  2,
-				'menu_id'    		=>  0,
-				'submenu_id'		=> 	0
-			],
-			[
-				'role_id'    		=>  1,
-				'menu_category_id'  =>  0,
-				'menu_id'    		=>  2,
-				'submenu_id'		=> 	0
-			],
-			[
-				'role_id'    		=>  1,
-				'menu_category_id'  =>  0,
-				'menu_id'    		=>  3,
-				'submenu_id'		=> 	0
+				'menu_item_id'  	=>  3  // Menu Management
 			],
 		]);
 	}

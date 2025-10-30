@@ -119,31 +119,64 @@ class Settings extends BaseController
 
     public function changeMenuCategoryPermission()
     {
-        $userAccess = $this->ApplicationModel->checkUserMenuCategoryAccess($this->request->getPost(null, FILTER_UNSAFE_RAW));
+        // 向後相容：從舊的 POST 參數轉換為新的結構
+        $postData = $this->request->getPost(null, FILTER_UNSAFE_RAW);
+        $userAccess = $this->ApplicationModel->checkUserAccess([
+            'roleID' => $postData['roleID'],
+            'menuItemID' => $postData['menuCategoryID']
+        ]);
         if ($userAccess > 0) {
-            $this->ApplicationModel->deleteMenuCategoryPermission($this->request->getPost(null, FILTER_UNSAFE_RAW));
+            $this->ApplicationModel->deleteMenuPermission([
+                'roleID' => $postData['roleID'],
+                'menuItemID' => $postData['menuCategoryID']
+            ]);
         } else {
-            $this->ApplicationModel->insertMenuCategoryPermission($this->request->getPost(null, FILTER_UNSAFE_RAW));
+            $this->ApplicationModel->insertMenuPermission([
+                'roleID' => $postData['roleID'],
+                'menuItemID' => $postData['menuCategoryID']
+            ]);
         }
     }
 
     public function changeMenuPermission()
     {
-        $userAccess = $this->ApplicationModel->checkUserAccess($this->request->getPost(null, FILTER_UNSAFE_RAW));
+        // 向後相容：從舊的 POST 參數轉換為新的結構
+        $postData = $this->request->getPost(null, FILTER_UNSAFE_RAW);
+        $userAccess = $this->ApplicationModel->checkUserAccess([
+            'roleID' => $postData['roleID'],
+            'menuItemID' => $postData['menuID']
+        ]);
         if ($userAccess > 0) {
-            $this->ApplicationModel->deleteMenuPermission($this->request->getPost(null, FILTER_UNSAFE_RAW));
+            $this->ApplicationModel->deleteMenuPermission([
+                'roleID' => $postData['roleID'],
+                'menuItemID' => $postData['menuID']
+            ]);
         } else {
-            $this->ApplicationModel->insertMenuPermission($this->request->getPost(null, FILTER_UNSAFE_RAW));
+            $this->ApplicationModel->insertMenuPermission([
+                'roleID' => $postData['roleID'],
+                'menuItemID' => $postData['menuID']
+            ]);
         }
     }
 
     public function changeSubMenuPermission()
     {
-        $userAccess = $this->ApplicationModel->checkUserSubmenuAccess($this->request->getPost(null, FILTER_UNSAFE_RAW));
+        // 向後相容：從舊的 POST 參數轉換為新的結構
+        $postData = $this->request->getPost(null, FILTER_UNSAFE_RAW);
+        $userAccess = $this->ApplicationModel->checkUserAccess([
+            'roleID' => $postData['roleID'],
+            'menuItemID' => $postData['submenuID']
+        ]);
         if ($userAccess > 0) {
-            $this->ApplicationModel->deleteSubmenuPermission($this->request->getPost(null, FILTER_UNSAFE_RAW));
+            $this->ApplicationModel->deleteMenuPermission([
+                'roleID' => $postData['roleID'],
+                'menuItemID' => $postData['submenuID']
+            ]);
         } else {
-            $this->ApplicationModel->insertSubmenuPermission($this->request->getPost(null, FILTER_UNSAFE_RAW));
+            $this->ApplicationModel->insertMenuPermission([
+                'roleID' => $postData['roleID'],
+                'menuItemID' => $postData['submenuID']
+            ]);
         }
     }
 
@@ -163,7 +196,7 @@ class Settings extends BaseController
     {
         if (!$this->validate([
             'inputMenuCategory' => [
-                'rules'     => 'required|is_unique[user_menu_category.menu_category]',
+                'rules'     => 'required|is_unique[user_menu_category.title]',
                 'errors'    => [
                     'required'  => 'Menu Category must be required.',
                     'is_unique' => 'Menu Category cannot be same.'
@@ -185,7 +218,7 @@ class Settings extends BaseController
     {
         if (!$this->validate([
             'inputMenuCategory' => [
-                'rules'     => 'required|is_unique[user_menu_category.menu_category]',
+                'rules'     => 'required|is_unique[user_menu_category.title]',
                 'errors'    => [
                     'required'  => 'Menu Category must be required.',
                     'is_unique' => 'Menu Category cannot be same'
@@ -207,30 +240,17 @@ class Settings extends BaseController
     public function createMenu()
     {
         if (!$this->validate([
-            'inputMenuCategory2' => [
-                'rules'     => 'required',
-                'errors'    => [
-                    'required'  => 'Menu Category must be required.'
-                ]
-            ],
             'inputMenuTitle' => [
-                'rules'     => 'required|is_unique[user_menu.title]',
+                'rules'     => 'required|is_unique[user_menu_category.title]',
                 'errors'    => [
                     'required'  => 'Menu Title must be required.',
                     'is_unique' => 'Menu Title cannot be same'
                 ]
             ],
             'inputMenuURL' => [
-                'rules'     => 'required|is_unique[user_menu.url]',
+                'rules'     => 'is_unique[user_menu_category.url]',
                 'errors'    => [
-                    'required'  => 'Menu Url must be required.',
                     'is_unique' => 'Menu Url cannot be same'
-                ]
-            ],
-            'inputMenuIcon' => [
-                'rules'     => 'required',
-                'errors'    => [
-                    'required'  => 'Menu Icon must be required.'
                 ]
             ]
         ])) {
@@ -269,16 +289,15 @@ class Settings extends BaseController
                 ]
             ],
             'inputSubmenuTitle' => [
-                'rules'     => 'required|is_unique[user_submenu.title]',
+                'rules'     => 'required|is_unique[user_menu_category.title]',
                 'errors'    => [
                     'required'  => 'Submenu Title must be required.',
                     'is_unique' => 'Submenu Title cannot be same'
                 ]
             ],
             'inputSubmenuURL' => [
-                'rules'     => 'required|is_unique[user_submenu.url]',
+                'rules'     => 'is_unique[user_menu_category.url]',
                 'errors'    => [
-                    'required'  => 'Submenu Url must be required.',
                     'is_unique' => 'Submenu Url cannot be same'
                 ]
             ],

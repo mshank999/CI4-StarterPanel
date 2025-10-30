@@ -40,7 +40,7 @@ class Authorization implements FilterInterface
             } else {
                 $dataAccess = [
                     'roleID' => session()->get('role'),
-                    'menuID' => $menu['id']
+                    'menuItemID' => $menu['id']
                 ];
                 $userAccess = $this->ApplicationModel->checkUserAccess($dataAccess);
                 if (!$userAccess) {
